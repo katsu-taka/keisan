@@ -3,66 +3,120 @@ package com.example.keisan;
 import java.util.Random;
 
 import android.app.Activity;
-import android.content.Context;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private TextView text1;
-	private EditText text2;
-	int result,answer;
+	private TextView textstatus, textquestion, textanswer;
+	private SoundPool mSoundPool;
+	private int mSoundOkID, mSoundNgID;
+	int result,answer,rightcnt,total;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// TextView取得
-		text1 = (TextView) findViewById(R.id.textView2);
-		// EditView取得
-		text2 = (EditText) findViewById(R.id.edittext1);
-		// Button取得
-		Button btn = (Button) findViewById(R.id.button1);
-		btn.setOnClickListener(new onClickButton(this));
-		
+		// TextViewStatus取得
+		textstatus = (TextView) findViewById(R.id.textViewStatus);
+		// TextViewQuestion取得
+		textquestion = (TextView) findViewById(R.id.textViewQuestion);
+		// textViewAnswer取得
+		textanswer = (TextView) findViewById(R.id.textViewAnswer);
+		// SoundPoolの初期化
+		mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+		// 音声データの読み込み完了を検知するリスナーを設定
+//		mSoundPool.setOnLoadCompleteListener(this);
+     // 音声データの読み込み開始
+		mSoundOkID = mSoundPool.load(this, R.raw.se_ok_btn, 1);
+		mSoundNgID = mSoundPool.load(this, R.raw.se_ng_btn, 1);
+
 		// 計算問題を準備
 		newQuestion();
+		// SoundPoolの解放
+//		mSoundPool.release();
 	}
 	
-	class onClickButton implements OnClickListener {
-		
-		private Context _context;
-		
-		public onClickButton(Context context) {
-			_context = context;
-		}
-		@Override
-		public void onClick(View v) {
-			String resultstr;
-			answer = Integer.parseInt(text2.getText().toString());
-			if (answer == result) {
-				resultstr = "正解";
-			} else {
-				resultstr = "不正解";
+	public void inputNumber(View view) {
+		String oldstr;
+		oldstr = textanswer.getText().toString();
+		switch(view.getId()) {
+		case R.id.button1:
+			textanswer.setText(oldstr + "1");
+			break;
+		case R.id.button2:
+			textanswer.setText(oldstr + "2");
+			break;
+		case R.id.button3:
+			textanswer.setText(oldstr + "3");
+			break;
+		case R.id.button4:
+			textanswer.setText(oldstr + "4");
+			break;
+		case R.id.button5:
+			textanswer.setText(oldstr + "5");
+			break;
+		case R.id.button6:
+			textanswer.setText(oldstr + "6");
+			break;
+		case R.id.button7:
+			textanswer.setText(oldstr + "7");
+			break;
+		case R.id.button8:
+			textanswer.setText(oldstr + "8");
+			break;
+		case R.id.button9:
+			textanswer.setText(oldstr + "9");
+			break;
+		case R.id.button10:
+			if (oldstr != "") {
+				textanswer.setText(oldstr + "0");
+				break;
 			}
-			
-			Toast.makeText(_context, resultstr, Toast.LENGTH_SHORT).show();
-			text2.setText(null);
-			newQuestion();
 		}
+	}
+	
+	public void inputClear(View view) {
+		textanswer.setText(null);
+	}
+	
+	public void inputEnter(View view) {
+		String resultstr;
+		if (textanswer.getText().length() == 0) {
+			return;
+		}
+		answer = Integer.parseInt(textanswer.getText().toString());
+		total++;
+		if (answer == result) {
+			// 音声の再生
+			mSoundPool.play(mSoundOkID, 1.0F, 1.0F, 0, 0, 1.0F);
+			resultstr = "正解";
+			rightcnt++;
+		} else {
+			// 音声の再生
+			mSoundPool.play(mSoundNgID, 1.0F, 1.0F, 0, 0, 1.0F);
+			resultstr = "不正解";
+		}
+		
+		// トースト表示
+		Toast.makeText(this, resultstr, Toast.LENGTH_SHORT).show();
+		textanswer.setText(null);
+		// 正解率/出題数表示
+		textstatus.setText(String.valueOf(rightcnt) + " / " + String.valueOf(total));
+		// 問題再表示
+		newQuestion();
 	}
 	
 	private void newQuestion() {
 		Random r = new Random();
 		int n1 = r.nextInt(8) + 1;
 		int n2 = r.nextInt(8) + 1;
-		
-		text1.setText(String.valueOf(n1) + " × " + String.valueOf(n2) + " = ?");
+		// 問題表示
+		textquestion.setText(String.valueOf(n1) + " × " + String.valueOf(n2) + " = ?");
 		result = n1 * n2;
 	}
 }
