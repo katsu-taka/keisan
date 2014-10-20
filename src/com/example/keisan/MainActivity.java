@@ -14,13 +14,13 @@ public class MainActivity extends Activity {
 	private TextView textstatus, textquestion, textanswer;
 	private SoundPool mSoundPool;
 	private int mSoundOkID, mSoundNgID;
-	int result,answer,rightcnt,total;
-	
+	int result, answer, rightcnt, total;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// TextViewStatus取得
 		textstatus = (TextView) findViewById(R.id.textViewStatus);
 		// TextViewQuestion取得
@@ -30,21 +30,26 @@ public class MainActivity extends Activity {
 		// SoundPoolの初期化
 		mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 		// 音声データの読み込み完了を検知するリスナーを設定
-//		mSoundPool.setOnLoadCompleteListener(this);
-     // 音声データの読み込み開始
+		// mSoundPool.setOnLoadCompleteListener(this);
+		// 音声データの読み込み開始
 		mSoundOkID = mSoundPool.load(this, R.raw.se_ok_btn, 1);
 		mSoundNgID = mSoundPool.load(this, R.raw.se_ng_btn, 1);
 
 		// 計算問題を準備
 		newQuestion();
-		// SoundPoolの解放
-//		mSoundPool.release();
 	}
-	
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		// SoundPoolの解放
+		mSoundPool.release();
+	}
+
 	public void inputNumber(View view) {
 		String oldstr;
 		oldstr = textanswer.getText().toString();
-		switch(view.getId()) {
+		switch (view.getId()) {
 		case R.id.button1:
 			textanswer.setText(oldstr + "1");
 			break;
@@ -79,11 +84,11 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-	
+
 	public void inputClear(View view) {
 		textanswer.setText(null);
 	}
-	
+
 	public void inputEnter(View view) {
 		String resultstr;
 		if (textanswer.getText().length() == 0) {
@@ -101,22 +106,24 @@ public class MainActivity extends Activity {
 			mSoundPool.play(mSoundNgID, 1.0F, 1.0F, 0, 0, 1.0F);
 			resultstr = "不正解";
 		}
-		
+
 		// トースト表示
 		Toast.makeText(this, resultstr, Toast.LENGTH_SHORT).show();
 		textanswer.setText(null);
 		// 正解率/出題数表示
-		textstatus.setText(String.valueOf(rightcnt) + " / " + String.valueOf(total));
+		textstatus.setText(String.valueOf(rightcnt) + " / "
+				+ String.valueOf(total));
 		// 問題再表示
 		newQuestion();
 	}
-	
+
 	private void newQuestion() {
 		Random r = new Random();
 		int n1 = r.nextInt(8) + 1;
 		int n2 = r.nextInt(8) + 1;
 		// 問題表示
-		textquestion.setText(String.valueOf(n1) + " × " + String.valueOf(n2) + " = ?");
+		textquestion.setText(String.valueOf(n1) + " × " + String.valueOf(n2)
+				+ " = ?");
 		result = n1 * n2;
 	}
 }
