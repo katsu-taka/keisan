@@ -1,20 +1,28 @@
 package com.example.keisan;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Random;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private TextView textstatus, textquestion, textanswer;
+	private TextView textstatus, textquestion, textanswer, textcount;
 	private SoundPool mSoundPool;
 	private int mSoundOkID, mSoundNgID;
 	int result, answer, rightcnt, total;
+	// [0]:ゲームモード,[1]:正解数, [2]:正解率, [3]:ハイスコア値
+	private String[] aryAnswer = new String[3];
+	private NormalModeTask normaltask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +35,24 @@ public class MainActivity extends Activity {
 		textquestion = (TextView) findViewById(R.id.textViewQuestion);
 		// textViewAnswer取得
 		textanswer = (TextView) findViewById(R.id.textViewAnswer);
+		// textViewcounter取得
+		textcount = (TextView) findViewById(R.id.textViewcounter);
 		// SoundPoolの初期化
 		mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
-		// 音声データの読み込み完了を検知するリスナーを設定
-		// mSoundPool.setOnLoadCompleteListener(this);
 		// 音声データの読み込み開始
 		mSoundOkID = mSoundPool.load(this, R.raw.se_ok_btn, 1);
 		mSoundNgID = mSoundPool.load(this, R.raw.se_ng_btn, 1);
+		// 正解率/出題数初期表示表示
+		aryAnswer[1] = "0 / 0";
+		textstatus.setText(aryAnswer[1]);
+
+		// タスクの生成
+		Intent intent = getIntent();
+		String[] str = intent.getStringArrayExtra("mode");
+		if (str[0].equals("normal")) {
+			normaltask = new NormalModeTask(this);
+			normaltask.execute();
+		}
 
 		// 計算問題を準備
 		newQuestion();
@@ -86,6 +105,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void inputClear(View view) {
+		// 入力値クリア
 		textanswer.setText(null);
 	}
 
@@ -94,8 +114,10 @@ public class MainActivity extends Activity {
 		if (textanswer.getText().length() == 0) {
 			return;
 		}
+		// 入力値取得
 		answer = Integer.parseInt(textanswer.getText().toString());
 		total++;
+		// 正誤判定
 		if (answer == result) {
 			// 音声の再生
 			mSoundPool.play(mSoundOkID, 1.0F, 1.0F, 0, 0, 1.0F);
@@ -110,9 +132,10 @@ public class MainActivity extends Activity {
 		// トースト表示
 		Toast.makeText(this, resultstr, Toast.LENGTH_SHORT).show();
 		textanswer.setText(null);
+
 		// 正解率/出題数表示
-		textstatus.setText(String.valueOf(rightcnt) + " / "
-				+ String.valueOf(total));
+		aryAnswer[1] = String.valueOf(rightcnt) + " / " + String.valueOf(total);
+		textstatus.setText(aryAnswer[1]);
 		// 問題再表示
 		newQuestion();
 	}
@@ -125,5 +148,76 @@ public class MainActivity extends Activity {
 		textquestion.setText(String.valueOf(n1) + " × " + String.valueOf(n2)
 				+ " = ?");
 		result = n1 * n2;
+	}
+
+	public class NormalModeTask extends AsyncTask<Void, Integer, Void> {
+		public TextView remaintext;
+		public Context context;
+		public String remainText;
+		long startTimeMillis, currentTimeMillis, diff;
+
+		public NormalModeTask(Context context) {
+			this.context = context;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// カウントダウン
+			// 開始時刻取得
+			startTimeMillis = System.currentTimeMillis();
+			// 現在時刻取得
+			currentTimeMillis = System.currentTimeMillis();
+			// 現在時刻 - 開始時刻
+			diff = currentTimeMillis - startTimeMillis;
+
+			// 現在時刻 - 開始時刻 < 1 の間継続
+			while (diff < 10000) {
+				try {
+					// 100ミリ秒停止
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+
+				// 経過時間計算
+				currentTimeMillis = System.currentTimeMillis();
+				diff = currentTimeMillis - startTimeMillis;
+				publishProgress((int) diff);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... progress) {
+			// 時間表示フォーマット、カウントダウン計算
+			SimpleDateFormat sdf = new SimpleDateFormat("mm:ss:SSSS");
+			timeUpdate(sdf.format(60000 - progress[0]));
+		}
+
+		protected void onPostExecute(Void result) {
+			gameEnd();
+		}
+	}
+
+	// カウントダウン表示
+	public void timeUpdate(String remainText) {
+		textcount.setText(remainText);
+	}
+
+	// ゲーム終了
+	public void gameEnd() {
+		// 「もう一度」ボタン押下、正解率計算
+		if (rightcnt != 0 && total != 0) {
+			DecimalFormat df = new DecimalFormat("##0.000%");
+			aryAnswer[2] = String.valueOf(df.format((double) rightcnt / total));
+		} else {
+			aryAnswer[2] = "0.000%";
+		}
+
+		// ゲーム画面（TitleActivity -> MainActivity）を開く
+		Intent intent = new Intent();
+		aryAnswer[0] = "normal";
+		intent.putExtra("mode", aryAnswer);
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	}
 }

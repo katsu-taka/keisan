@@ -14,7 +14,7 @@
         android:textSize="45sp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewAnserStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -37,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="130dip"
+        android:onClick="clickReStart"
         android:text="@string/Restart" />
 
 </LinearLayout>
