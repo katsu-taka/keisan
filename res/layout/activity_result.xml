@@ -19,16 +19,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dip"
-        android:text="xx / xx \n xx.xxx%"
         android:textSize="15sp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textHighScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dip"
-        android:text="ハイスコア更新！ x -> y"
         android:textColor="#ff0000" />
 
     <Button

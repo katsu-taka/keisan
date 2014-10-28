@@ -19,5 +19,6 @@
     <string name="NormalMode">通常モード</string>
     <string name="EndlessMode">エンドレスモード</string>
     <string name="Restart">もう一回</string>
+    <string name="highScore">ハイスコア：</string>
 
 </resources>

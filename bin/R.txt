@@ -300,9 +300,8 @@ int id showTitle 0x7f0a000d
 int id split_action_bar 0x7f0a001e
 int id submit_area 0x7f0a0039
 int id tabMode 0x7f0a0008
+int id textHighScore 0x7f0a004e
 int id textView1 0x7f0a004c
-int id textView2 0x7f0a004f
-int id textView3 0x7f0a004e
 int id textViewAnserStatus 0x7f0a004d
 int id textViewAnswer 0x7f0a003f
 int id textViewQuestion 0x7f0a003e
@@ -375,6 +374,7 @@ int string abc_searchview_description_voice 0x7f0b0008
 int string abc_shareactionprovider_share_with 0x7f0b000c
 int string abc_shareactionprovider_share_with_application 0x7f0b000b
 int string app_name 0x7f0b000d
+int string highScore 0x7f0b001f
 int string result 0x7f0b000e
 int string title 0x7f0b000f
 int style AppBaseTheme 0x7f0c008b

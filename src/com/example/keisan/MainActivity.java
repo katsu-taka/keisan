@@ -20,8 +20,8 @@ public class MainActivity extends Activity {
 	private SoundPool mSoundPool;
 	private int mSoundOkID, mSoundNgID;
 	int result, answer, rightcnt, total;
-	// [0]:ゲームモード,[1]:正解数, [2]:正解率, [3]:ハイスコア値
-	private String[] aryAnswer = new String[3];
+	// [0]:ゲームモード,[1]:正解数, [2]:出力数, [3]:回答率, [4]:ハイスコア値
+	private String[] aryAnswer = new String[5];
 	private NormalModeTask normaltask;
 
 	@Override
@@ -43,8 +43,9 @@ public class MainActivity extends Activity {
 		mSoundOkID = mSoundPool.load(this, R.raw.se_ok_btn, 1);
 		mSoundNgID = mSoundPool.load(this, R.raw.se_ng_btn, 1);
 		// 正解率/出題数初期表示表示
-		aryAnswer[1] = "0 / 0";
-		textstatus.setText(aryAnswer[1]);
+		aryAnswer[1] = "0";
+		aryAnswer[2] = "0";
+		textstatus.setText(aryAnswer[1] + " / " + aryAnswer[2]);
 
 		// タスクの生成
 		Intent intent = getIntent();
@@ -134,8 +135,9 @@ public class MainActivity extends Activity {
 		textanswer.setText(null);
 
 		// 正解率/出題数表示
-		aryAnswer[1] = String.valueOf(rightcnt) + " / " + String.valueOf(total);
-		textstatus.setText(aryAnswer[1]);
+		aryAnswer[1] = String.valueOf(rightcnt);
+		aryAnswer[2] = String.valueOf(total);
+		textstatus.setText(aryAnswer[1] + " / " + aryAnswer[2]);
 		// 問題再表示
 		newQuestion();
 	}
@@ -208,9 +210,9 @@ public class MainActivity extends Activity {
 		// 「もう一度」ボタン押下、正解率計算
 		if (rightcnt != 0 && total != 0) {
 			DecimalFormat df = new DecimalFormat("##0.000%");
-			aryAnswer[2] = String.valueOf(df.format((double) rightcnt / total));
+			aryAnswer[3] = String.valueOf(df.format((double) rightcnt / total));
 		} else {
-			aryAnswer[2] = "0.000%";
+			aryAnswer[3] = "0.000%";
 		}
 
 		// ゲーム画面（TitleActivity -> MainActivity）を開く

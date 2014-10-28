@@ -1138,9 +1138,8 @@ containing a value of this type.
         public static final int split_action_bar=0x7f0a001e;
         public static final int submit_area=0x7f0a0039;
         public static final int tabMode=0x7f0a0008;
+        public static final int textHighScore=0x7f0a004e;
         public static final int textView1=0x7f0a004c;
-        public static final int textView2=0x7f0a004f;
-        public static final int textView3=0x7f0a004e;
         public static final int textViewAnserStatus=0x7f0a004d;
         public static final int textViewAnswer=0x7f0a003f;
         public static final int textViewQuestion=0x7f0a003e;
@@ -1270,6 +1269,7 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
         public static final int app_name=0x7f0b000d;
+        public static final int highScore=0x7f0b001f;
         public static final int result=0x7f0b000e;
         public static final int title=0x7f0b000f;
     }

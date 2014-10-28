@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 public class ResultActivity extends Activity {
-	private TextView textansstatus;
+	private TextView textansstatus, texthighscore;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -16,11 +16,14 @@ public class ResultActivity extends Activity {
 
 		// TextViewStatus取得
 		textansstatus = (TextView) findViewById(R.id.textViewAnserStatus);
+		// TextViewStatus取得
+		texthighscore = (TextView) findViewById(R.id.textHighScore);
 
 		Intent intent = getIntent();
 		String[] str = intent.getStringArrayExtra("mode");
-		textansstatus.setText(str[1] + "\n" + str[2]);
-
+		textansstatus.setText(str[1] + " / " + str[2] + "\n" + str[3]);
+		// ハイスコア設定
+		texthighscore.setText(getText(R.string.highScore) + str[4]);
 	}
 
 	public void clickReStart(View view) {
